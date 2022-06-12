@@ -11,13 +11,14 @@ int main(int argc, char* argv[])
     CommandParser commandParser;
     commandParser.process(app);
 
-    if(commandParser.isURLSet())
+    if(commandParser.isURLSet() && commandParser.isOutputset())
     {
-
+        // qInfo() << "URL: "    << commandParser.getURL();
+        // qInfo() << "output: " << commandParser.getOutputPath();
     }
     else
     {
-        qInfo() << "URL must be specified";
+        qInfo() << "URL and output file path must be specified";
         return EXIT_FAILURE;
     }
 

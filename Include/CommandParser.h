@@ -19,7 +19,4 @@ private:
     QCommandLineParser parser;
     QCommandLineOption* URLOption;
     QCommandLineOption* OutputOption;
-
-    QString outputPath;
-    QString ytURL;
 };

@@ -15,8 +15,6 @@ CommandParser::~CommandParser()
 void CommandParser::process(QCoreApplication& app)
 {
     parser.process(app);
-    outputPath = parser.value(*OutputOption);
-    ytURL = parser.value(*OutputOption);
 }
 
 void CommandParser::addHelpOption(void)
@@ -29,7 +27,8 @@ void CommandParser::addHelpOption(void)
 void CommandParser::addAppOptions(void)
 {
     URLOption = new QCommandLineOption(QStringList() << "u" << "url",     
-        QCoreApplication::translate("main", "Youtube link"));
+        QCoreApplication::translate("main", "Youtube link"), 
+        QCoreApplication::translate("main", "URL"));
     
     OutputOption = new QCommandLineOption(QStringList() << "o" << "output",  
         QCoreApplication::translate("main", "Output filename"), 
@@ -44,6 +43,11 @@ bool CommandParser::isURLSet(void)
     return parser.isSet(*URLOption);
 }
 
+QString CommandParser::getURL(void)
+{
+    return parser.value(*URLOption); //ytURL;
+}
+
 bool CommandParser::isOutputset(void)
 {
     return parser.isSet(*OutputOption);
@@ -51,10 +55,5 @@ bool CommandParser::isOutputset(void)
 
 QString CommandParser::getOutputPath(void)
 {
-    return ytURL;
-}
-
-QString CommandParser::getURL(void)
-{
-    return outputPath;
+    return parser.value(*OutputOption); //outputPath;
 }
