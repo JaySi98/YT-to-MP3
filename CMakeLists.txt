@@ -5,16 +5,18 @@
 cmake_minimum_required(VERSION 3.16.3)
 
 # nazwa projektu i wersja
-project(YTtoMP3 VERSION 1.0)
+project(Template VERSION 1.0)
 
 set(SOURCES
     Src/Main.cpp
     Src/CommandParser.cpp
+    Src/FileDownloader.cpp
 )
 
 set(HEADERS
     Include/Config.h.in
     Include/CommandParser.h
+    Include/FileDownloader.h
 )
 
 # wskazanie maina
@@ -27,8 +29,10 @@ configure_file(Include/Config.h.in Include/Config.h)
 ############################################################
 # External Libraries
 ############################################################
-option(ADD_BOOST   "Include boost libs in project"   ON)
-option(ADD_QT_CLI  "Include QT libs in project"   ON)
+option(ADD_BOOST   "Include boost lib in a project"   ON)
+option(ADD_OPENCV  "Include opencv lib in a project"  OFF)
+option(ADD_CURL    "Include curl lib in a project"    OFF)
+option(ADD_POCO    "Include poco lib in a project"    ON)
 
 if(ADD_BOOST)
     set(Boost_FIND_REQUIRED TRUE)
@@ -38,33 +42,35 @@ if(ADD_BOOST)
     set(Boost_USE_STATIC_LIBS TRUE)
     #set(Boost_ADDITIONAL_VERSIONS "1.67" "1.67.0")
 
-    find_package(Boost COMPONENTS regex)
+    find_package(Boost COMPONENTS regex filesystem program_options)
 
     list(APPEND EXTRA_INCLUDES ${Boost_INCLUDE_DIRS})
     list(APPEND EXTRA_LINKS    ${Boost_LIBRARIES})    
 endif()
 
-if(ADD_QT_CLI)
-    # set(CMAKE_AUTOUIC ON)
-    # set(CMAKE_AUTOMOC ON)
-    # set(CMAKE_AUTORCC ON)
+if(ADD_OPENCV)
+    find_package(OpenCV REQUIRED)
 
-    # set(CMAKE_CXX_STANDARD 11)
-    # set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-    set(CMAKE_PREFIX_PATH "/home/jakub/ExternalFiles/Qt/6.3.0/gcc_64")
-    find_package(QT NAMES Qt6 Qt5 COMPONENTS Core Concurrent Network REQUIRED)
-    find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Concurrent Network REQUIRED)
-
-    # target_link_libraries(Thread Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Concurrent Qt${QT_VERSION_MAJOR}::Network)
-    list(APPEND EXTRA_LINKS Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Concurrent Qt${QT_VERSION_MAJOR}::Network)    
+    list(APPEND EXTRA_INCLUDES ${OpenCV_INCLUDE_DIRS})
+    list(APPEND EXTRA_LINKS    ${OpenCV_LIBS})
 endif()
 
+if(ADD_CURL)
+    find_package(CURL REQUIRED) 
+    
+    list(APPEND EXTRA_INCLUDES ${CURL_INCLUDE_DIR})
+    list(APPEND EXTRA_LINKS    ${CURL_LIBRARIES})
+endif()
+
+if(ADD_POCO)
+    find_package(Poco REQUIRED Foundation Util Net Crypto NetSSL )
+    list(APPEND EXTRA_LINKS    Poco::Foundation Poco::Util Poco::Net Poco::Crypto Poco::NetSSL)
+
+endif()
 ############################################################
 # Target 
 ############################################################
 # dodanie podfolderów do projektu
-add_subdirectory(Lib)
 add_subdirectory(Tests)
 
 # wskazanie folderów "include"(plików nagłówkowych bibliotek)

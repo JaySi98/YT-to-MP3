@@ -1,59 +1,49 @@
 #include <CommandParser.h>
 
-CommandParser::CommandParser() : URLOption(nullptr), OutputOption(nullptr)
-{
-    addHelpOption();
-    addAppOptions();
-}
+CommandParser::CommandParser() :
+    result(RESULT_ERROR), 
+    ImgURLRegex("http(?:s?):\\/\\/(?:www\\.)?youtu(?:be\\.com\\/watch\?v=|\\.be\\/)([\\w\\-\\_]*)(&(amp;)?‌​[\\w\?‌​=]*)?"), 
+    ImgUrl("")
+{ }
 
-CommandParser::~CommandParser()
+void CommandParser::ParseCommands(int argc, char* argv[])
 {
-    delete URLOption;
-    delete OutputOption;
-}
-
-void CommandParser::process(QCoreApplication& app)
-{
-    parser.process(app);
-}
-
-void CommandParser::addHelpOption(void)
-{
-    parser.addHelpOption();
-    parser.addPositionalArgument("url",    QCoreApplication::translate("main", "Youtube link"));
-    parser.addPositionalArgument("output", QCoreApplication::translate("main", "Output filename"));
-}
-
-void CommandParser::addAppOptions(void)
-{
-    URLOption = new QCommandLineOption(QStringList() << "u" << "url",     
-        QCoreApplication::translate("main", "Youtube link"), 
-        QCoreApplication::translate("main", "URL"));
+    po::options_description desc("Allowed options");
+    desc.add_options()
+        ("h", "Shows program options")
+        ("u", po::value<std::string>(), "YouTube link");
     
-    OutputOption = new QCommandLineOption(QStringList() << "o" << "output",  
-        QCoreApplication::translate("main", "Output filename"), 
-        QCoreApplication::translate("main", "filename"));
+    po::variables_map vm;
+    po::store(po::parse_command_line(argc,argv,desc),vm);
+    po::notify(vm);
 
-    parser.addOption(*URLOption);
-    parser.addOption(*OutputOption);
+    if(vm.count("h"))
+    {
+        std::cout << desc << std::endl;
+        result = RESULT_HELP;
+        return;
+    }
+
+    if(vm.count("u"))
+    {
+        std::string option = vm["u"].as<std::string>(); 
+        checkURL(option);
+    }
 }
 
-bool CommandParser::isURLSet(void)
+void CommandParser::checkURL(std::string line)
 {
-    return parser.isSet(*URLOption);
+    if(regex_match(line, regex(ImgURLRegex), match_partial))
+    {
+        ImgUrl = line;
+        result = RESULT_OK_URL;
+    }
 }
 
-QString CommandParser::getURL(void)
+std::string CommandParser::GetUrl(void)
 {
-    return parser.value(*URLOption); //ytURL;
-}
-
-bool CommandParser::isOutputset(void)
-{
-    return parser.isSet(*OutputOption);
-}
-
-QString CommandParser::getOutputPath(void)
-{
-    return parser.value(*OutputOption); //outputPath;
+    if(result == RESULT_OK_URL)
+        return ImgUrl;
+    else
+        throw "No valid URL specified";
 }
