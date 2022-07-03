@@ -2,7 +2,7 @@
 
 CommandParser::CommandParser() :
     result(RESULT_ERROR), 
-    ImgURLRegex("http(?:s?):\\/\\/(?:www\\.)?youtu(?:be\\.com\\/watch\?v=|\\.be\\/)([\\w\\-\\_]*)(&(amp;)?‌​[\\w\?‌​=]*)?"), 
+    ImgURLRegex("(?:https?:\\/\\/)?(?:www\\.)?youtu\\.?be(?:\\.com)?\\/?.*(?:watch|embed)?(?:.*v=|v\\/|\\/)([\\w\\-_]+)\\&?"), 
     ImgUrl("")
 { }
 
