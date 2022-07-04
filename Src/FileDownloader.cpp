@@ -11,10 +11,10 @@ bool FileDownloader::DownloadVideo(std::string url)
 	FTPSStreamFactory::registerFactory();
 
 	// Note: we must create the passphrase handler prior Context
-	SharedPtr<InvalidCertificateHandler> ptrCert = new ConsoleCertificateHandler(false); // ask the user via console
-	Context::Ptr ptrContext = new Context(Context::TLS_CLIENT_USE, "", "", "", 
-      Context::VERIFY_RELAXED, 9, false, "ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH");
-	SSLManager::instance().initializeClient(0, ptrCert, ptrContext);
+	// SharedPtr<InvalidCertificateHandler> ptrCert = new ConsoleCertificateHandler(false); // ask the user via console
+	// Context::Ptr ptrContext = new Context(Context::TLS_CLIENT_USE, "", "", "", 
+   //    Context::VERIFY_NONE, 9, false, "ALL:!ADH:!LOW:!EXP:!MD5:@STRENGTH");
+	// SSLManager::instance().initializeClient(0, ptrCert, ptrContext);
 
 	try
 	{
@@ -32,6 +32,8 @@ bool FileDownloader::DownloadVideo(std::string url)
 
    return result;
 }
+
+// blob:https://www.youtube.com/4972dc09-b8d2-4803-a124-bb3afd4e84ff
 
 // bool FileDownloader::DownloadVideo(std::string url)
 // {

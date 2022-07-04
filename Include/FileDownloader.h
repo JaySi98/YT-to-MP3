@@ -58,5 +58,5 @@ public:
     bool DownloadVideo(std::string url);
 
 private:
-    const std::string outputPath = "output.mp3";
+    const std::string outputPath = "output.html";
 };
